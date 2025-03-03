@@ -35,6 +35,8 @@ Last in last out - Último que entra é o primeiro que saí
 
 ====================AULA 03===================================
 
+Criação de Fila sem descrito
+
 const variável = [numero];
 
 
