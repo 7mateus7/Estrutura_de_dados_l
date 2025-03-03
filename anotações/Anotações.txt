@@ -1,0 +1,57 @@
+VETOR - TAD - Tipo abstratos de dados
+Posições de memoria diferentes
+Encadeamento de memória que não é organizado.
+
+Iremos trabalhar dimensionando os slotes de memória ram
+
+ESTRUTURA DE DADOS
+
+Fila
+Pilha
+Lista
+Trabalharmos sem Descritor e com descritor
+
+Sem descritor - Variáveis simples
+Com descritor - Trabalhamos com um objeto
+
+Forma estática 
+Forma dinâmica
+
+1 prova 
+Demais notas de trabalho
+
+Fila - O primeira a entrar é o primeiro a sair = PEPS
+First In - First Out = FIFO	
+
+Alocação dinâmica
+Grafos
+
+
+
+==========================AULA 02=============================
+
+Last in last out - Último que entra é o primeiro que saí
+
+
+====================AULA 03===================================
+
+const variável = [numero];
+
+
+Lista tem que estar ordenada
+
+Inserindo o número já ordenado
+
+Contador de número da lista. ex= QTD= 4
+
+Remoção = Solicito qual número da lista eu quero remover
+
+Após a remoção, todos os números avançam para a posição anterior
+
+
+
+
+
+
+
+ 
