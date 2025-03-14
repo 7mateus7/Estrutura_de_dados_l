@@ -2,49 +2,68 @@ Program Pzim ;
 Const
 	N = 100;
 Type
-	pilha = array[1..N] of string;	
-var
-	frase:string[100];
-	p:pilha;
-	tamanho:integer;
+	pilha = array[1..100] of string;
+Var
+	frase,resultado:string[N];
 
-Procedure inicializar(var n:integer);
+Procedure inicializar(var num:integer);
 	Begin
-		n:=1;
+		num:=0;
 	End;
 
-Procedure le_frase(var f:string[100]; var tam:integer);
+Function v_cheia(t,ma);
+
+Function le_frase():string;
+Var
+	f:string;	
 	Begin
+		CLRSCR;
+		Writeln('Informe a sua frase:');
 		Readln(f);
-		tam:=length(f);
+		le_frase:=f;
 	End;
 
-Function v_cheia(t:integer):boolean;
+Procedure p_empilhar(letra:string;var vetor:pilha;var top:integer;maximo:integer);
 	Begin
-		If t > 100 do
-			v_cheia:=true
-		Else
-			v_cheia:=false; 
-	End; }
+		cheia:=v_cheia(top,maximo);
+		top:=top +1;
+		vetor[top]:=letra;	
+	End;
 
-Procedure inserir(f:string;var vet:vetor; var tam:integer);
-Var
-	i:integer;
+Procedure desempilhar(vetor:pilha; var top:integer; var result:string);
 	Begin
-		cheia:=v_cheia(tam);
-		If not cheia then
-			While (f[i] <> ' ') and (i <= tam) do
-				i:=i +1;
-			 
+		While top > 0 do
+			Begin
+				result:= result + vetor[top];
+				top:=top -1;
+			End;
+			result:= result + ' ';
 	End;
 	
-{Procedure escrever(vet:vetor; tam:integer);
+Procedure empilhar(f:string; num:integer; var res:string[100]);
 Var
+	vet:pilha;
+	topo,i:integer;
+	Begin
+		res:='';
+		inicializar(topo);
+		For i:=1 to length(f) do
+			Begin
+				If f[i] <> ' ' then
+					p_empilhar(f[i],vet,topo,num)
+				Else
+						desempilhar(vet,topo,res);
+			End;
+		desempilhar(vet,topo,res);
+	End;
 
-	End;}
-	
+Procedure escrever(resul:string);
+	Begin
+		CLRSCR;
+		Writeln(resul);
+	End;	
 Begin
-	le_frase(frase,tamanho);
-	inserir(frase,v,tamanho);
-	//escrever(v,tamanho);
+	frase:=Le_frase();
+	empilhar(frase,N,resultado);
+	escrever(resultado	);
 End.

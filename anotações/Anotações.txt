@@ -51,6 +51,18 @@ Remoção = Solicito qual número da lista eu quero remover
 Após a remoção, todos os números avançam para a posição anterior
 
 
+===============AULA 05=======================================
+Software para venda de ingresso
+Locais diferentes
+Geral - 2 tipos de torcedores
+Ingressos: Entregue umas pilhas de ingresso
+O torcedor entra na fila
+Compra e remove a pilha o ingresso
+e escolha de uma lista, aonde ele quer sentar [posição]
+O sócio tem vantagem em comparação com os torcedores
+
+
+
 
 
 
