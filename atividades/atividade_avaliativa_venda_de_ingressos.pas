@@ -52,24 +52,25 @@ Function v_vazia(tam_atual:integer):boolean;	//Verifica se a pilha está vazia
 
 Procedure le_torcedor(var torce:integer);	//O usuário informa se o torcedor é torcedor do Santa ou da torcida visiante
 	Begin
-		While (torce <> 1) and (torce <>2) do
-			Begin
 				CLRSCR;
-				Writeln('Escolha a sua opção:');
-				Writeln('[1] - Torcedor do Santa Catarina:');	 
-				Writeln('[2] - Torcedor Visitante:');
-				Readln(torce);                                                         
-				If (torce <> 1) and (torce <> 2) then
-				Writeln('Opção errada, por favor informe novamente!'); //Caso o usuário informar um número diferente de 1 e 2, está mensagem é exibida
-			End;
+				torce:=0;
+				While (torce <> 1) and (torce <> 2) do
+				Begin
+					Writeln('Escolha a sua opção:');
+					Writeln('[1] - Torcedor do Santa Catarina:');	 
+					Writeln('[2] - Torcedor Visitante:');
+					Readln(torce);                                                         
+					If (torce <> 1) and (torce <> 2) then
+						Writeln('Opção errada, por favor informe novamente!'); //Caso o usuário informar um número diferente de 1 e 2, está mensagem é exibida
+				End;
 	End;
 
 Procedure le_arquibancada(torce:integer;var arqui:integer);	//Define em qual arquibancada o torcedor irá se acomodar, com base nas retrições.
 Var
 	opc,n:integer;
 	Begin
-		CLRSCR;
-		If torce = 2 then
+		//CLRSCR;
+		If torce = 2 then //Torcedor visitante é defininido automaticamente para o de visitante
 			opc:=3
 		Else
 			Begin
@@ -80,19 +81,19 @@ Var
 			End;
 			If opc = 1 then
 				Begin
-					Writeln('Arquibancada: Coberta - Setor SÓCIO TORCEDOR');
+					Writeln('Arquibancada: Coberta - Setor SÓCIO TORCEDOR');		//O sócio-torcedor também já recebe sua arquibancada pré determinada segunda as normativas
 					arqui:=1;
 				End
 			Else
 				If opc = 2 then
 					Begin
-						Writeln('Escolha a arquibancada:');
+						Writeln('Escolha a arquibancada:');  //Torcedor comum pode escolher entre arquibancada geral e arquibancada coberta
 						Writeln('[1] - Arquibancada Coberta');
 						Writeln('[2] - Geral');
 						Readln(n);
 						If n = 1 then
 							Begin
-								Writeln('Arquibancada: Coberta - Setor Torcedor');
+								Writeln('Arquibancada: Coberta - Setor Torcedor');		
 								arqui:=2
 							End
 						Else
@@ -114,13 +115,13 @@ Var
 						Writeln('Opção errada!');
 	End;
 
-Procedure remover_pilha(var pilha_atual:pilha; var tam_atual:integer; max_pilha:integer); 	//Remove uma posição na pilha de ingressos determinada
+Procedure remover_pilha(var pilha_atual:pilha; var tam_atual:integer; max_pilha:integer); 	//Remove uma posição na pilha de ingressos determinada.
 	Begin
 		Writeln('Ingresso ',pilha_atual[tam_atual],' vendido.');
 		tam_atual:=tam_atual -1;
 	End;
 
-Procedure remover_fila(var r_fila:fila; var tamanho:integer);
+Procedure remover_fila(var r_fila:fila; var tamanho:integer);		//Remove o torcedor da fila após a compra do seu ingresso
 Var
 	i:integer;
 	Begin
@@ -131,7 +132,7 @@ Var
 	
 Procedure venda(var pilha_venda:pilha; var tam_pilha:integer; max_pilha:integer; var reto:boolean;var fila_atual:fila; var tam_fila_atual:integer);
 Var
-	vazia:boolean;
+	vazia:boolean;                  //Procedimento de escolha e venda de um lugar
 	opc:integer;
 	Begin
 		Writeln;
@@ -148,7 +149,7 @@ Var
 			
 		Writeln();
 		
-		Writeln('Deseja continuar as vendas?');
+		Writeln('Deseja continuar as vendas?');		//Solicita se o usuário deseja continuar o processo
 		Writeln('[1] - SIM');
 		Writeln('[2] - NÃO');
 		Readln(opc);
@@ -161,20 +162,20 @@ Var
 				Writeln('opção errada!');
 	End;
 Begin
-	iniciar_fila(fila_torcedor,tam_fila,max_estadio);	
+	iniciar_fila(fila_torcedor,tam_fila,max_estadio);	//Define a fila de torcedores
 	
-	retorno:=true;
+	retorno:=true; //Define o inicio do processo
 	
-	iniciar_variavel(pilha_socio,tam_socio,max_socio);
-	iniciar_variavel(pilha_torcedor_arquibancada,tam_torcedor_geral,max_torcedor_geral);
-	iniciar_variavel(pilha_torcedor_geral,tam_torcedor_arquibancada,max_torcedor_arquibancada);
+	iniciar_variavel(pilha_socio,tam_socio,max_socio); //inicia a pilha de sócios-torcedores
+	iniciar_variavel(pilha_torcedor_arquibancada,tam_torcedor_geral,max_torcedor_geral);	//Inicia a pilha de torcedores na Geral
+	iniciar_variavel(pilha_torcedor_geral,tam_torcedor_arquibancada,max_torcedor_arquibancada);	//Inicia a pilha de torcedores na Arquibancada Coberta
 	
-	le_torcedor(torcedor);
 	While retorno do
 		Begin
-			le_arquibancada(torcedor,arquibancada);
+			le_torcedor(torcedor);	//Define qual tipo de torcedor. Visitante/Torcedor do Santa 
+			le_arquibancada(torcedor,arquibancada); //Defina as arquibancadas
 			Case arquibancada of
-				1: venda(pilha_socio,tam_socio,max_socio,retorno,fila_torcedor,tam_fila);
+				1: venda(pilha_socio,tam_socio,max_socio,retorno,fila_torcedor,tam_fila); //Procedimento de venda e escolha do lugar
 				2: venda(pilha_torcedor_arquibancada,tam_torcedor_arquibancada,max_torcedor_arquibancada,retorno,fila_torcedor,tam_fila);	
 			End;
 		End;
