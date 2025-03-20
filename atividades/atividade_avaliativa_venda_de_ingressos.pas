@@ -3,16 +3,17 @@ Const
 	max_socio = 500;
 	max_torcedor_geral = 700;
 	max_torcedor_arquibancada = 1500;			//Definição dos valores máximos das pilhas de torcedores comuns, sócios-torcedores e visitantes
-	max_visitantes = 300;
+	max_visitante = 300;
 	max_estadio = 3000;
 Type
 	pilha = array[1..max_estadio] of integer;		//Definição do type PILHA para utilização em procedimentos
 	fila = array[1..max_estadio] of integer; 
 Var
-	tam_fila,torcedor,arquibancada,tam_socio,tam_torcedor_geral,tam_torcedor_arquibancada:integer; 		//Definição de todas as variáveis de escopo global e de números inteiros
+	tam_fila,torcedor,arquibancada,tam_socio,tam_torcedor_geral,tam_torcedor_arquibancada,tam_visitante:integer; 		//Definição de todas as variáveis de escopo global e de números inteiros
 	pilha_socio:pilha;
 	pilha_torcedor_geral:pilha;
 	pilha_torcedor_arquibancada:pilha;  		//Definição das variáveis de pilha como: pilha sócio-torcedores,torcedores geral, torcedores visitantes
+	pilha_visitante:pilha;
 	fila_torcedor:fila;
 	retorno:boolean;		//Definição da variável que defini se o processo continuará ou será interrompido
 
@@ -27,11 +28,16 @@ Var
 
 Procedure iniciar_variavel(var pilha_atual:pilha; var tam_atual:integer; tam_max:integer);	//Encrementa todas as posições das pilhas de ingressos. Ex: pilha visitantes = 300.
 Var
-	i:integer;
+	i,n:integer;
 	Begin
 		tam_atual:=tam_max;
-		For i:=1 to tam_max do
-			pilha_atual[i]:=i;
+		i:=tam_max;
+		While i >= 1 do
+			Begin
+				n:=n +1;
+				pilha_atual[n]:=i;
+				i:=i -1;
+			End;
 	End;
 
 Function v_cheia(tam_atual,tam_maximo:integer):boolean;	//Verifica se a pilha está cheia
@@ -135,14 +141,14 @@ Var
 	vazia:boolean;                  //Procedimento de escolha e venda de um lugar
 	opc:integer;
 	Begin
-		Writeln;
+		CLRSCR;
 		vazia:=v_vazia(tam_pilha);
 		If not vazia then
 			Begin
 				Writeln('Torcedor: ',fila_atual[1]);	
 				remover_pilha(pilha_venda,tam_pilha,max_pilha);
 				remover_fila(fila_atual,tam_fila_atual);
-				Writeln('Ainda restram ',(tam_pilha),' ingressos vagos.');
+				Writeln('Ainda restram ',(tam_pilha),' ingressos vagos no setor.');
 			End	
 		Else
 			Writeln('Todos os lugares estão ocupados!');
@@ -167,8 +173,9 @@ Begin
 	retorno:=true; //Define o inicio do processo
 	
 	iniciar_variavel(pilha_socio,tam_socio,max_socio); //inicia a pilha de sócios-torcedores
-	iniciar_variavel(pilha_torcedor_arquibancada,tam_torcedor_geral,max_torcedor_geral);	//Inicia a pilha de torcedores na Geral
-	iniciar_variavel(pilha_torcedor_geral,tam_torcedor_arquibancada,max_torcedor_arquibancada);	//Inicia a pilha de torcedores na Arquibancada Coberta
+	iniciar_variavel(pilha_torcedor_arquibancada,tam_torcedor_arquibancada,max_torcedor_arquibancada);	//Inicia a pilha de torcedores na Geral
+	iniciar_variavel(pilha_torcedor_geral,tam_torcedor_geral,max_torcedor_geral);	//Inicia a pilha de torcedores na Arquibancada Coberta
+	iniciar_variavel(pilha_visitante,tam_visitante,max_visitante);
 	
 	While retorno do
 		Begin
@@ -177,6 +184,8 @@ Begin
 			Case arquibancada of
 				1: venda(pilha_socio,tam_socio,max_socio,retorno,fila_torcedor,tam_fila); //Procedimento de venda e escolha do lugar
 				2: venda(pilha_torcedor_arquibancada,tam_torcedor_arquibancada,max_torcedor_arquibancada,retorno,fila_torcedor,tam_fila);	
+				3: venda(pilha_torcedor_geral,tam_torcedor_geral,max_torcedor_geral,retorno,fila_torcedor,tam_fila);
+				4: venda(pilha_visitante,tam_visitante,max_visitante,retorno,fila_torcedor,tam_fila);
 			End;
 		End;
 End.
