@@ -1,20 +1,34 @@
 Program Pzim ;
 Const
-	max_torcedor_geral = 700;
+	max_torcedor_geral = 700;                   //Definição de Constantes do número de torcedores
 	max_torcedor = 1500;
-	max_socio = 500;
+	max_socio = 500;                                             
 	max_visitante = 300;
+	
+	valor_socio = 50;
+	valor_torcedor = 100;
+	valor_torcedor_geral = 40;
+	valor_visitante = 80;
 Type
-	pilha = array[1..3000] of integer;
-	fila = array[1..3000] of integer;
+	pilha = array[1..1500] of integer;         //Definindo o tamanho das pilhas, filas e Listas
+	fila = array[1..1500] of integer;
+	lista = array[1..1500]of integer;
 Var
-	tam_socio, tam_torcedor, tam_torcedor_geral, tam_visitante:integer;
+	opc:integer;  //Variável que lê a opção do MENU
 	
-	opc,tam_fila_socio,tam_fila_torcedor, tam_fila_torcedor_geral, tam_fila_visitante:integer;
+	arrecadacao_socio,arrecadacao_torcedor,arrecadacao_torcedor_geral,arrecadacao_visitante,arrecadacao_total:integer;  
+
+	tam_pilha_socio, tam_pilha_torcedor, tam_pilha_torcedor_geral, tam_pilha_visitante:integer;		//Variáveis das pilhas de ingressos de cada setor do estádio
 	
+	tam_fila_socio,tam_fila_torcedor, tam_fila_torcedor_geral, tam_fila_visitante:integer;		//Variáveis que determinam o tamanho das filas em seus respctivos setores
+	
+	tam_lista_socio, tam_lista_torcedor, tam_lista_torcedor_geral, tam_lista_visitante :integer;  //Variáveis que determinam a lista de lugares vagos em seus respectivos setores
+		
 	pilha_socio, pilha_torcedor, pilha_torcedor_geral, pilha_visitante:pilha;
 	
 	fila_socio, fila_torcedor, fila_torcedor_geral, fila_visitante:fila;
+	
+	lista_socio, lista_torcedor, lista_torcedor_geral, lista_visitante :lista;
 	
 Procedure inicializar(var n:integer);
 	Begin
@@ -46,6 +60,17 @@ Function v_vazia(tam:integer):boolean;
 	  	v_vazia:=false;
 	End;
 
+Procedure iniciar_lista(var lista_atual:lista;var tam_lista:integer; tam_max:integer );
+Var
+	i:integer;
+	Begin
+		If tam_lista = 0 then
+			tam_lista:=1;
+		For i:=tam_lista to tam_max do
+			lista_atual[i]:=i;
+		tam_lista:=tam_max;	
+	End;
+
 Procedure inserir_fila(var fila_atual:fila;var tam_atual:integer; maximo_fila:integer; texto:string);
 Var
 	cheia:boolean;
@@ -57,7 +82,9 @@ Var
 				tam_atual:=tam_atual +1;
 				fila_atual[tam_atual]:=random(10000);
 				Writeln('+1 Torcedor na fila de ',texto);
-			End;
+			End
+		Else
+			Writeln('Sua fila está com a capacidade Máxima');
 	End;
 
 Procedure remover_fila(var fila_remove:fila; var tam_fila_remove:integer); 
@@ -69,73 +96,168 @@ Var
 		tam_fila_remove:=tam_fila_remove -1;
 	End;
 
-Procedure remover_pilha(var pilha_remover:pilha;var tam_pilha_remove:integer);
-Var
-	vazia:boolean;
+Procedure remover_pilha(var pilha_remover:pilha;var tam_pilha_remove:integer; var vazia:boolean; txt:string);
 	Begin
 		vazia:=v_vazia(tam_pilha_remove);
 		If not vazia then
 			tam_pilha_remove:=tam_pilha_remove -1
 		Else
-			Writeln('Não há ingressos disponíveis');
+			Writeln('Não há ingressos disponíveis no setor ',txt);
 	End;
 
-Procedure venda(var fila_venda:fila;var tam_fila_atual:integer; texto:string;var pilha_atual:pilha;var tam_pilha_atual:integer);
+Procedure pesquisa (lista_pesq:lista; tam_lista_pesq,n:integer; var ret:integer);
 Var
+	i,final,media:integer;
+	Begin
+		inicializar(ret);
+		i:=1;
+		final:=tam_lista_pesq;
+		media:=(i + final) div 2;
+		If lista_pesq[media] = n then
+			ret:=media
+		Else
+			While (i<=final) and (lista_pesq[media] <> n) do
+				Begin
+					media:=(i+final) div 2;
+					If lista_pesq[media] = n then
+						ret:=media
+					Else
+						If lista_pesq[media] < n then
+							i:=media +1
+						Else
+							final:=media -1
+				End;
+	End;
+
+Procedure remove_lista(var lista_remove:lista; var tam_lista_remove:integer; posicao:integer);
+Var
+	i:integer;
+	Begin
+		For i:=posicao to (tam_lista_remove -1) do
+			lista_remove[i]:=lista_remove[i+1];
+		tam_lista_remove:= tam_lista_remove -1;
+	End;
+
+Procedure cadeira(var lista_atual:lista; var tam_lista_atual:integer; txt:string; fila_torcida:fila; posicao:integer);
+Var
+	i,numero,retorno:integer;
 	vazia:boolean;
 	Begin
-		vazia:=v_vazia(tam_fila_atual);
-		While not vazia do
+		Writeln();
+		inicializar(retorno);
+		vazia:=v_vazia(tam_lista_atual);
+		If not vazia then
+			While retorno = 0 do
+				Begin
+					CLRSCR;
+					For i:=1 to tam_lista_atual do
+						Begin
+							Write('',lista_atual[i]:5);
+							If i mod 30 = 0 then
+								Writeln();
+						End;
+					Writeln();
+					Writeln('Escolha a cadeira do torcedor ',fila_torcida[posicao],' do setor ',txt,':');
+					Readln(numero);
+					pesquisa(lista_atual,tam_lista_atual,numero,retorno);
+					If retorno <> 0 then
+						remove_lista(lista_atual,tam_lista_atual,retorno)
+					Else
+						Writeln('Cadeira Indisponível!');
+				End;		
+	End;
+
+Procedure venda(var fila_venda:fila;var tam_fila_atual:integer; texto:string;
+								var pilha_atual:pilha;var tam_pilha_atual:integer;
+								var lista_atual:lista; var tam_lista_atual:integer);
+Var
+	fila_vazia,ingresso:boolean;
+	lugar:integer;
+	Begin
+		While not v_vazia(tam_fila_atual) do
 			Begin
 				CLRSCR;
-				vazia:=v_vazia(tam_fila_atual);
-				If not vazia then
-					Begin
-						remover_pilha(pilha_atual,tam_pilha_atual);
-						//Writeln('Realizado venda no setor ',texto);
-						remover_fila(fila_venda,tam_fila_atual);
-					End
-				Else
-					Writeln('A fila do setor de ',texto,' está vazia!');
-			End;
-		WRITELN();			
+					remover_pilha(pilha_atual,tam_pilha_atual,ingresso,texto);
+					If not ingresso then					
+						cadeira(lista_atual,tam_lista_atual,texto,fila_venda,tam_fila_atual);
+					remover_fila(fila_venda,tam_fila_atual);  
+			End;		
+		Writeln('Fila ',texto,' vazia!');
 	End;
+
+Procedure faturamento(tam_pilha_ingresso,max_pilha,valor:integer;Var total_setor:integer; txt:string);
+Var
+	qtd:integer;
+	Begin
+		qtd:=max_pilha - tam_pilha_ingresso;
+		total_setor:=total_setor + (qtd * valor);
+		Writeln('--------------------------------------------------------------------');
+		Writeln('Foram vendidos ',qtd,' ingressos no setor ',txt);
+		Writeln();
+		Writeln('Gerando um faturamento de R$',total_setor);
+		Writeln();
+		Writeln('--------------------------------------------------------------------');		
+	End;
+	
+Procedure faturamento_total(total_socio,total_torcedor,total_geral,total_visitante:integer);
+Var
+	soma:integer;
+	Begin
+		soma:=total_socio + total_torcedor + total_geral + total_visitante;
+		Writeln('Renda Total = R$',soma);
+	End;	
 	
 Begin
 	inicializar(opc);
 	
-	iniciar_pilha(max_socio, pilha_socio, tam_socio);
-	iniciar_pilha(max_torcedor, pilha_torcedor, tam_torcedor);
-	iniciar_pilha(max_torcedor_geral, pilha_torcedor_geral, tam_torcedor_geral);
-	iniciar_pilha(max_visitante, pilha_visitante, tam_visitante);	
+	iniciar_pilha(max_socio, pilha_socio, tam_pilha_socio);
+	iniciar_pilha(max_torcedor, pilha_torcedor, tam_pilha_torcedor);
+	iniciar_pilha(max_torcedor_geral, pilha_torcedor_geral, tam_pilha_torcedor_geral);
+	iniciar_pilha(max_visitante, pilha_visitante, tam_pilha_visitante);	
 	
-	While opc <> 6 do
+	iniciar_lista(lista_socio,tam_lista_socio,max_socio);
+	iniciar_lista(lista_torcedor,tam_lista_torcedor,max_torcedor);
+	iniciar_lista(lista_torcedor_geral,tam_lista_torcedor_geral,max_torcedor_geral);
+	iniciar_lista(lista_visitante,tam_lista_visitante,max_visitante);
+	
+	While opc <> 7 do
 		Begin
 			Writeln('[1] - +1 Torcedor - Sócio Torcedor');
 			Writeln('[2] - +1 Torcedor - Setor Arquibancada Coberta');
 			Writeln('[3] - +1 Torcedor - Setor Geral');
 			Writeln('[4] - +1 Torcedor - Visitantes'); 
-			Writeln('[5] - Vender Ingressos');
-			Writeln('[6] - Encerrar Vendas');
+			Writeln('[5] - Esvaziar Filas');
+			Writeln('[6] - Faturamento');
+			Writeln('[7] - Sair do Programa');
 			Readln(opc);
 			If opc = 1 then
 				inserir_fila(fila_socio,tam_fila_socio,max_socio,'Sócio Torcedor')
 			Else
 				If opc = 2 then
-					inserir_fila(fila_torcedor,tam_fila_torcedor,max_torcedor,'Aquibancada Coberta')
+					inserir_fila(fila_torcedor,tam_fila_torcedor,max_torcedor,'Aquibancada Coberta [Torcedor]')
 				Else
 					If opc = 3 then
-						inserir_fila(fila_torcedor_geral,tam_fila_torcedor_geral, max_torcedor_geral,'Arquibancada Geral' )
+						inserir_fila(fila_torcedor_geral,tam_fila_torcedor_geral, max_torcedor_geral,'Arquibancada Geral [Torcedor]' )
 					Else
 						If opc = 4 then
 							inserir_fila(fila_visitante,tam_fila_visitante,max_visitante,'Visitantes')
 						Else
 							If opc = 5 then
 								Begin
-									venda(fila_socio,tam_fila_socio,'Sócio Torcedor',pilha_socio,tam_socio);
-									venda(fila_torcedor,tam_fila_torcedor,'Setor Arquibancada Coberta',pilha_torcedor,tam_torcedor);
-									venda(fila_torcedor_geral,tam_fila_torcedor_geral,'Setor Geral',pilha_torcedor_geral,tam_torcedor_geral);
-									venda(fila_visitante,tam_fila_visitante,'Visitantes',pilha_visitante,tam_visitante);
+									venda(fila_socio,tam_fila_socio,'Sócio Torcedor',pilha_socio,tam_pilha_socio,lista_socio,tam_lista_socio);
+									venda(fila_torcedor,tam_fila_torcedor,'Setor Arquibancada Coberta',pilha_torcedor,tam_pilha_torcedor,lista_torcedor,tam_lista_torcedor);
+									venda(fila_torcedor_geral,tam_fila_torcedor_geral,'Setor Geral',pilha_torcedor_geral,tam_pilha_torcedor_geral,lista_torcedor_geral,tam_lista_torcedor_geral);
+									venda(fila_visitante,tam_fila_visitante,'Visitantes',pilha_visitante,tam_pilha_visitante,lista_visitante,tam_lista_visitante);
 								End
+							Else
+								If opc = 6 then
+									Begin
+										CLRSCR;
+										faturamento(tam_pilha_socio,max_socio,valor_socio,arrecadacao_socio,'Sócio Torcedor');
+										faturamento(tam_pilha_torcedor,max_torcedor,valor_torcedor,arrecadacao_torcedor,'Arquibancada Coberta [Torcedor]');
+										faturamento(tam_pilha_torcedor_geral,max_torcedor_geral,valor_torcedor_geral,arrecadacao_torcedor_geral,'Arquibancada Geral [Torcedor]');
+										faturamento(tam_pilha_visitante,max_visitante,valor_visitante,arrecadacao_visitante,'Visitante');
+										faturamento_total(arrecadacao_socio,arrecadacao_torcedor,arrecadacao_torcedor_geral,arrecadacao_visitante)
+									End;
 		End;	
 End.
