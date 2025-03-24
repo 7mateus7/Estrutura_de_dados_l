@@ -1,112 +1,110 @@
 Program Pzim ;
+Const
+	tam_max = 10;
 Type
-	vetor = array[1..6] of integer;
+	fila = array[1..tam_max] of integer;
 Var
-	opc,qtd:integer;
-	v:vetor;
+	vetor:fila;
+	tam_vetor,opc:integer;
 
-Function v_cheia(numero:integer):boolean;  //Função para validar se a fila está cheia.
+Function v_cheia(posi,max:integer):boolean;
 	Begin
-		If numero >= 6 then
-			v_cheia:=false
+		If posi >= max then
+			v_cheia:=true
 		Else
-			v_cheia:=true;
+			v_cheia:=false;
 	End;
 
-Function v_vazio(numero:integer):boolean;
+Function v_vazia(posi:integer):boolean;
 	Begin
-		If numero < 1 then
-			v_vazio:=false
+		If posi = 0 then
+			v_vazia:=true
 		Else
-			v_vazio:=true;
+			v_vazia:=false;
 	End;
-
-Procedure inserir(var vet:vetor; var num:integer);  //Procedimento para inserir um número a fila ou retornar se ela está cheia.
+		
+Procedure le_fila(Var vet:fila; var posicao:integer; maximo:integer);
 Var
 	cheia:boolean;
+	n:integer;
 	Begin
 		CLRSCR;
-		cheia:=v_cheia(num);
-		If cheia = true then
-			Begin
-				num:= num +1;
-				Writeln('Escreva o seu número');
-				Read(vet[num]);
-				CLRSCR;	
+		cheia:=v_cheia(posicao,maximo);
+		If not cheia then
+			Begin	
+				Writeln('Informe o seu número:');
+				Readln(n);
+				posicao:=posicao +1;
+				vet[posicao]:=n;
 			End
 		Else
-			Writeln('A fila está cheia!');	
-	End;
-
-Procedure remover(var vet:vetor; var num:integer);   //Remover o primeiro elemento
-Var
-	vazio:boolean;
-	i:integer;
-	Begin
-		CLRSCR;
-		vazio:=v_vazio(num);
-		If vazio = true then
-			Begin
-				For i:=1 to (num-1) do
-					vet[i]:=vet[i+1];
-				num:=num -1;
-			End
-		Else	
-			Writeln('A fila está vazia!');
-	End;
-
-Procedure consultar(vet:vetor; num:integer);			//Consulta o próximo elemento da fila.
-Var
-	vazio:boolean;
-	Begin
-		CLRSCR;
-		vazio:=v_vazio(num);
-		If vazio = false then
-			Writeln('A fila está vazia. Não há elementos para consultar.')
-		Else
-			Writeln('O príximo elemento da fila será ',vet[1]);
-	End;
-
-Procedure escrever(vet:vetor; num:integer);   //Escrever a fila
-Var
-	i:integer;
-	vazio:boolean;
-	Begin
-		CLRSCR;
-		vazio:=v_vazio(num);
-		If vazio = false then
-			Writeln('A fila está vazia. Por favor, insira números.')
-		Else
-			Begin
-				For i:=1 to num do
-					Write('',vet[i]:3);
-				Writeln();
-			End;
+			Writeln('Sua fila está cheia');
 	End;
 	
+Procedure remove_fila(var vet:fila; var posicao:integer);
+Var
+	vazia:boolean;
+	i:integer;
+	Begin
+		CLRSCR;
+		vazia:=v_vazia(posicao);
+		If not vazia then
+			Begin
+				For i:=1 to (posicao -1) do
+					vet[i]:=vet[i+1];
+				posicao:=posicao -1;
+				Writeln('Número removido!');
+			End
+		Else
+			Writeln('Sua fila está vazia!');
+	End;	
+
+Procedure consulta(vet:fila; posicao:integer);
+Var	
+	vazia:boolean;
+	Begin  
+		CLRSCR;
+		vazia:=v_vazia(posicao);
+		If not vazia then
+			Writeln('O próximo número a ser removido será: ',vet[1])
+		Else
+			Writeln('Sua fila está vazia!');
+	End;
+
+Procedure escrever(vet:fila; posicao:integer);
+Var
+	vazia:boolean;
+	i:integer;
+	Begin
+		CLRSCR;
+		vazia:=v_vazia(posicao);
+		If not vazia then
+			Begin
+				For i:=1 to posicao do
+					Write('',vet[i]:3);
+			End
+		Else
+			Writeln('Sua fial está vazia!');		
+	End;
+		 
 Begin
-	qtd:=0;
-	While opc <> 5 do			//Menu
+	While opc <> 5 do
 		Begin
-			Writeln('[1] - Inserir');
-			Writeln('[2] - Remover');
-			Writeln('[3] - Consultar');
+			Writeln();
+			Writeln('[1] - Inserir Fila');
+			Writeln('[2] - Remover Fila');
+			Writeln('[3] - Consultar Fila');
 			Writeln('[4] - Escrever');
-			Writeln('[5] - Sair');
+			Writeln('[5] - Encerrar Programa');
 			Readln(opc);
-			If opc = 1 then
-				inserir(v,qtd)
-			Else
-				If opc = 2 then
-					remover(v,qtd)
+			Case opc of
+				1: le_fila(vetor,tam_vetor,tam_max);
+				2: remove_fila(vetor,tam_vetor);
+				3: consulta(vetor,tam_vetor); 
+				4: escrever(vetor,tam_vetor);
+				5: Writeln('Encerrando o programa...');
 				Else
-					If opc = 3 then
-						consultar(v,qtd)
-					Else
-						If opc = 4 then
-							escrever(v,qtd)
-						Else
-							If opc = 5 then
-								Writeln('Saíndo');
+					Writeln('Opção Errada!');
+			End;
 		End;
 End.
