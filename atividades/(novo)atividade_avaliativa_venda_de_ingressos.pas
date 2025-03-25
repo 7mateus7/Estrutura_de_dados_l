@@ -135,9 +135,7 @@ Procedure remove_lista(var lista_remove:lista; var tam_lista_remove:integer; pos
 Var
 	i:integer;
 	Begin
-		For i:=posicao to (tam_lista_remove -1) do
-			lista_remove[i]:=lista_remove[i+1];
-		tam_lista_remove:= tam_lista_remove -1;
+		lista_remove[posicao]:=0;
 	End;
 
 Procedure cadeira(var lista_atual:lista; var tam_lista_atual:integer; txt:string; fila_torcida:fila; posicao:integer); //Procedimento que força o torcedor a escolher uma cadeira vaga.
@@ -151,9 +149,19 @@ Var
 		If not vazia then
 			While retorno = 0 do
 				Begin
-					For i:=1 to tam_lista_atual do  //Apresenta a lista de cadeiras vagas para o usuário.
+					i:=1;
+					While i <= tam_lista_atual do  //Apresenta a lista de cadeiras vagas para o usuário.
 						Begin
-							Write('',lista_atual[i]:5);
+							If lista_atual[i] = 0 then
+								Begin
+									Write(' Indisponível');
+									i:=i +1;
+								End
+							Else
+								Begin	
+									Write('',lista_atual[i]:5);
+									i:=i +1;
+								End;
 							If i mod 30 = 0 then
 								Writeln();
 						End;
@@ -176,17 +184,27 @@ Procedure venda(var fila_venda:fila;var tam_fila_atual:integer; texto:string; //
 								var lista_atual:lista; var tam_lista_atual:integer);
 Var
 	fila_vazia,ingresso:boolean;
-	lugar:integer;
+	lugar,opcao:integer;
 	Begin
-		While not v_vazia(tam_fila_atual) do //Indica que enquanto a fila não esteja vazia, ele seguirá realzando este processo.
+		opcao:=1;
+		While (opcao = 1) and (not v_vazia(tam_fila_atual)) do //Indica que enquanto a fila não esteja vazia, ele seguirá realzando este processo.
 			Begin
-				CLRSCR;
-					remover_pilha(pilha_atual,tam_pilha_atual,ingresso,texto); //Se caso houver ingressos disponível, ele irá remover neste procedimento. 
-					If not ingresso then //Retorna o valor do procedimento 'v_vazia', onde se caso ainda tenha ingressos disponíveis o processo continuará.					
-						cadeira(lista_atual,tam_lista_atual,texto,fila_venda,tam_fila_atual); //O torcedor escolhe sua cadeira.
-					remover_fila(fila_venda,tam_fila_atual); //Remove o torcedor da fila  
+				If not v_vazia(tam_fila_atual) then
+					Begin
+						CLRSCR;
+						remover_pilha(pilha_atual,tam_pilha_atual,ingresso,texto); //Se caso houver ingressos disponível, ele irá remover neste procedimento. 
+						If not ingresso then //Retorna o valor do procedimento 'v_vazia', onde se caso ainda tenha ingressos disponíveis o processo continuará.					
+							cadeira(lista_atual,tam_lista_atual,texto,fila_venda,tam_fila_atual); //O torcedor escolhe sua cadeira.
+						remover_fila(fila_venda,tam_fila_atual); //Remove o torcedor da fila
+					End
+				Else
+					Writeln('Fila ',texto,' vazia!'); //Caso a fila esteja vazia, apresenta está mensagem. 
+				Writeln('Deseja continuar a venda?');
+				Writeln('[1] - SIM');
+				Writeln('[0] - NÃO');
+				Readln(opcao); 
 			End;		
-		Writeln('Fila ',texto,' vazia!'); //Caso a fila esteja vazia, apresenta está mensagem.
+		
 	End;
 
 Procedure faturamento(tam_pilha_ingresso,max_pilha,valor:integer;Var total_setor:integer; txt:string); //Procedimento de verifiar quantos ingressos foram vendidos e realizar a sua conversão em dinheiro.
