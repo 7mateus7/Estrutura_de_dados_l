@@ -199,10 +199,13 @@ Var
 					End
 				Else
 					Writeln('Fila ',texto,' vazia!'); //Caso a fila esteja vazia, apresenta está mensagem. 
-				Writeln('Deseja continuar a venda?');
-				Writeln('[1] - SIM');
-				Writeln('[0] - NÃO');
-				Readln(opcao); 
+				If not (v_vazia(tam_fila_atual)) then
+					Begin
+						Writeln('Deseja continuar a venda?');
+						Writeln('[1] - SIM');
+						Writeln('[0] - NÃO');
+						Readln(opcao);
+					End; 
 			End;		
 		
 	End;
