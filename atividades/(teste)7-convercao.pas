@@ -9,7 +9,7 @@ Var
 	
 Procedure le_numero(var n:integer);
 	Begin
-		Writeln('Informe um número:');
+		Writeln('Informe um nÃºmero:');
 		Readln(n);
 	End;
 
