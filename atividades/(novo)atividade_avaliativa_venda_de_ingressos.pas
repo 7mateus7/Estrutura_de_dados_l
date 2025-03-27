@@ -261,9 +261,9 @@ Begin
 				2: inserir_fila(fila_torcedor,tam_fila_torcedor,max_torcedor,'Aquibancada Coberta [Torcedor]');
 				3: inserir_fila(fila_torcedor_geral,tam_fila_torcedor_geral, max_torcedor_geral,'Arquibancada Geral [Torcedor]' );
 				4: inserir_fila(fila_visitante,tam_fila_visitante,max_visitante,'Visitantes');
-				5:Begin //Caso o número inserido seja o 5, o procedimento inicializa a venda de ingressos até que elas estejam vazias.
+				5:Begin 		//Caso o número inserido seja o 5, o procedimento inicializa a venda de ingressos até que elas estejam vazias.
 						venda(fila_socio,tam_fila_socio,'Sócio Torcedor',pilha_socio,tam_pilha_socio,lista_arquibancada,tam_lista_arquibancada); //Priorizando a fila de Sócio torcedores.
-						If v_vazia(tam_pilha_socio) and (tam_fila_socio >= 0) then //Caso não haja mais lugares disponíveis, o sócio é encaminhado a fila de Torcedor Arquibancada. 
+						If v_vazia(tam_pilha_socio) and (tam_fila_socio > 0) then //Caso não haja mais lugares disponíveis, o sócio é encaminhado a fila de Torcedor Arquibancada. 
 							tam_fila_torcedor:=tam_fila_torcedor +1;
 							
 						venda(fila_torcedor,tam_fila_torcedor,'Setor Arquibancada Coberta',pilha_torcedor,tam_pilha_torcedor,lista_arquibancada,tam_lista_arquibancada); //Venda de ingresso para o setor Arquibancada Coberta.
