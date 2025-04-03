@@ -95,6 +95,7 @@ Begin
 				2:remover(pilha);
 				3:consultar(pilha);
 				4:escrever(pilha);
+				5:Writeln('Saindo...');
 			Else
 				Writeln('Opção Inválida');
 			End;
