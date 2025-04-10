@@ -62,8 +62,81 @@ e escolha de uma lista, aonde ele quer sentar [posição]
 O sócio tem vantagem em comparação com os torcedores
 
 
+==================AULA 06==================================
+Descritor = Record
+
+Ex:
+TFila = Record
+  fila:array[]:integer
+  posição,entregantes,saintes,evasao:integer
+  tempo médio: real
+End;
+
+fila.posicao:=
+
+fila.fila[i]:=
+
+fila.fila[fila.posicao]
 
 
+==================AULA 08==================================
+Finalizamos pilha sem descritor
+Ficaria muito inviável em um sistema muito complexo
+
+Solução = DESCRITORES
+
+Type
+  TFila = Record
+	vet: array[1..X] of integer;
+	tma: integer;
+ End;
+Var
+  Fila : TFila;
+
+
+Passamos a fila inteira por parâmetro
+
+Vetor é uma variável estática
+
+ALOCAÇÂO DINÂMICA
+-ponteiro
+
+Limite passa a ser memória RAM
+
+Nulo -> nil
+Aloca -> new
+Desaloca -> dispose
+
+Vetor é um vetor que pode ser acessado diretamente
+
+Mas agora será acessado sequencialmente
+
+Ex:
+Quando a fila está vazia. Fila:=nil
+
+Alocar espaço na memória new(variável);
+
+Verificar se o espeço está vazio
+  If variável = nil then
+   Write('memória cheia')
+ Else
+   variável¹.dados:= elemento
+   variavel¹.prox:=nil;
+   f:=variavel¹
+
+Escrevendo
+   variavel:=f;
+   While variavel<>nil do
+     Begin
+     	write(variavel);
+	variável:=variavel^.prox
+     End;
+
+Removendo
+  variável:=f
+  f:=f^.prox 
+  dispose(variavel)
+ 
 
 
 
