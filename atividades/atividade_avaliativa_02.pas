@@ -5,7 +5,7 @@ Const
 	max_plotter = 3;
 Type
 	TFila = record
-		dados : array[1..10] of integer;
+		dados : array[1..10] of string;
 		posicao : integer;
 		entrante : integer;
 		atendidas : integer;
@@ -13,7 +13,8 @@ Type
 	End;
 Var
 	fila_mono,fila_color,fila_plotter:TFila;
-	opc,num:integer;
+	num:integer;
+	opc:string;
 
 Function cheia(posi,m:integer):boolean;
 	Begin
@@ -31,28 +32,29 @@ Function vazia(posi:integer):boolean;
 			vazia:=false;
 	End;
 
-Procedure inicializa(var n:integer);
-	Begin
-		n:=0;
-	End;
-
-Procedure menu(var opcao:integer);
+Procedure menu(var opcao:string);
 	Begin
 		Writeln('Escolha a sua opção:');
-		Writeln('[1] - Inserir');
-		Writeln('[2] - Remover');
-		Writeln('[3] - Consultar');
-		Writeln('[4] - Sair');
-		Readln(opcao)
+		Writeln('[I] - Inserir');
+		Writeln('[R] - Remover');
+		Writeln('[C] - Consultar');
+		Writeln('[E] - Escrever');
+		Writeln('[S] - Sair');
+		Readln(opcao);
+		opcao:=upcase(opcao);
 	End;
 
 Procedure opcoes(txt:string; Var numero:integer);
 	Begin
-		Writeln('Você deseja ',txt,' em qual das opções?');
-		Writeln('[1] - MONO');
-		Writeln('[2] - COLOR');
-		Writeln('[3] - PLOTTER');
-		REadln(numero);
+		numero:=0;
+		While (numero <> 1) and (numero <> 2) and (numero <> 3 ) do
+			Begin
+				Writeln('Você deseja ',txt,' em qual das opções?');
+				Writeln('[1] - MONO');
+				Writeln('[2] - COLOR');
+				Writeln('[3] - PLOTTER');
+				Readln(numero);
+			End;
 	End;
 	
 Procedure inserir_fila(var f:TFila; max:integer; txt:string);
@@ -62,7 +64,8 @@ Procedure inserir_fila(var f:TFila; max:integer; txt:string);
 			Begin
 				f.entrante:=f.entrante +1;
 				f.posicao:=f.posicao +1;
-				f.dados[f.posicao]:=f.entrante;
+				Writeln('Informe o nome:');
+				Readln(f.dados[f.posicao]);
 				Writeln('+1 elementos inserido na fila ',txt);
 			End
 		Else
@@ -88,13 +91,36 @@ Var
 		Else
 			Writeln('A Fila ',txt,' está vazia!');
 	End;
+
+Procedure consultar_fila(f:TFila; txt:string; max:integer);
+	Begin
+		CLRSCR;
+		Writeln('Consulta a Fila',txt);
+		Writeln(f.entrante,' pessoas entraram na fila.');
+		Writeln(f.atendidas,' pessoas foram atendidas.');
+		Writeln(f.rejeitadas,' pessoas foram rejeitadas da fila.');
+		Writeln('Há ',f.posicao,' pessoas na fila.');
+		Writeln('A próxima pessoa na fila é ',f.dados[1]);
+		Writeln('Ainda restam ',(max - f.posicao),' posições livres.');
+		Writeln();		
+	End;
+
+Procedure escrever_fila(f:TFila; txt:string);
+Var
+	i:integer;
+	Begin
+		CLRSCR;
+		Writeln('A sua fila ',txt,' contém as seguintes pessoas:');
+		For i:=1 to f.posicao do
+			Writeln(f.dados[i]);
+		Writeln();	
+	End;
 	
 Begin
-	inicializa(opc);
-	While opc <> 4 do
+	While opc <> 'S' do
 		Begin
 			menu(opc);
-			If opc = 1 then
+			If opc = 'I' then
 				Begin 
 					opcoes('Inserir fila',num);
 					Case num of 
@@ -104,7 +130,7 @@ Begin
 					End
 				End
 			Else
-				If opc = 2 then
+				If opc = 'R' then
 					Begin
 						opcoes('Remover Fila',num);
 						Case num of
@@ -113,5 +139,30 @@ Begin
 							3: remover_fila(fila_plotter,'PLOTTER');
 						End
 					End 
+				Else
+					If opc = 'C' then
+						Begin
+							opcoes('Consultar Fila',num);
+							Case num of
+								1: consultar_fila(fila_mono,'MONO',max_mono);
+								2: consultar_fila(fila_color,'COLOR',max_color);	
+								3: consultar_fila(fila_plotter,'PLOTTER',max_plotter);
+							End
+						End
+					Else
+						If opc = 'E' then
+							Begin
+								opcoes('Escrever Fila',num);	
+								Case num of
+									1: escrever_fila(fila_mono,'MONO');
+									2: escrever_fila(fila_color,'COLOR');
+									3: escrever_fila(fila_plotter,'PLOTTER')
+								End
+							End
+						Else
+							Begin
+								CLRSCR;
+								Writeln('Opção Inválida. Por favor, insira novamante!');
+							End;
 		End;
 End.
