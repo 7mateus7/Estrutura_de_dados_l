@@ -7,8 +7,9 @@ Type
 	TFila = record
 		dados : array[1..10] of integer;
 		posicao : integer;
-		pessoa : integer;
-		atendido : integer;
+		entrante : integer;
+		atendidas : integer;
+		rejeitadas : integer;
 	End;
 Var
 	fila_mono,fila_color,fila_plotter:TFila;
@@ -35,13 +36,16 @@ Procedure inserir_fila(var f:TFila; max:integer; txt:string);
 		CLRSCR;
 		If not cheia(f.posicao,max) then
 			Begin
-				f.pessoa:=f.pessoa +1;
+				f.entrante:=f.entrante +1;
 				f.posicao:=f.posicao +1;
-				f.dados[f.posicao]:=f.pessoa;
+				f.dados[f.posicao]:=f.entrante;
 				Writeln('+1 elementos inserido na fila ',txt);
 			End
 		Else
-			Writeln('Sua fila está cheia!');
+			Begin
+				Writeln('Sua fila está cheia!');
+				f.rejeitadas:=f.rejeitadas +1;
+			End;
 	End;
 
 Procedure remover_fila(var f:TFila; txt:string);
@@ -55,6 +59,7 @@ Var
 				For i:=1 to (f.posicao -1) do
 					f.dados[i]:=f.dados[i+1];
 				f.posicao:=f.posicao -1;
+				f.atendidas:=f.atendidas +1;
 			End	
 		Else
 			Writeln('A Fila ',txt,' está vazia!');
