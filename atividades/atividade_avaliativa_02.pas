@@ -13,7 +13,7 @@ Type
 	End;
 Var
 	fila_mono,fila_color,fila_plotter:TFila;
-	opc:integer;
+	opc,num:integer;
 
 Function cheia(posi,m:integer):boolean;
 	Begin
@@ -29,6 +29,30 @@ Function vazia(posi:integer):boolean;
 			vazia:=true
 		Else
 			vazia:=false;
+	End;
+
+Procedure inicializa(var n:integer);
+	Begin
+		n:=0;
+	End;
+
+Procedure menu(var opcao:integer);
+	Begin
+		Writeln('Escolha a sua opção:');
+		Writeln('[1] - Inserir');
+		Writeln('[2] - Remover');
+		Writeln('[3] - Consultar');
+		Writeln('[4] - Sair');
+		Readln(opcao)
+	End;
+
+Procedure opcoes(txt:string; Var numero:integer);
+	Begin
+		Writeln('Você deseja ',txt,' em qual das opções?');
+		Writeln('[1] - MONO');
+		Writeln('[2] - COLOR');
+		Writeln('[3] - PLOTTER');
+		REadln(numero);
 	End;
 	
 Procedure inserir_fila(var f:TFila; max:integer; txt:string);
@@ -66,26 +90,28 @@ Var
 	End;
 	
 Begin
-	While opc <> 7 do
+	inicializa(opc);
+	While opc <> 4 do
 		Begin
-			Writeln('Escolha uma opção:');
-			Writeln('-------------------------------------------');
-			Writeln('| Inserir na Fila   | Remover da Fila     |');
-			Writeln('-------------------------------------------');
-			Writeln('| [1] Mono          | [4] Mono            |');
-			Writeln('| [2] Colorida      | [5] Colorida        |');
-			Writeln('| [3] Plotter       | [6] Plotter         |');
-			Writeln('-------------------------------------------');
-			Writeln('| [7] Sair                                |');
-			Writeln('-------------------------------------------');
-			Readln(opc);
-			Case opc of
-				1: inserir_fila(fila_mono,max_mono,'MONO');
-				2: inserir_fila(fila_color,max_color,'COLOR');
-				3: inserir_fila(fila_plotter,max_plotter,'PLOTTER');
-				4: remover_fila(fila_mono,'MONO');
-				5: remover_fila(fila_color,'COLOR');
-				6: remover_fila(fila_plotter,'PLOTTER');
-			End;
+			menu(opc);
+			If opc = 1 then
+				Begin 
+					opcoes('Inserir fila',num);
+					Case num of 
+						1: inserir_fila(fila_mono,max_mono,'MONO');
+						2: inserir_fila(fila_color,max_color,'COLOR'); 
+						3: inserir_fila(fila_plotter,max_plotter,'PLOTTER');
+					End
+				End
+			Else
+				If opc = 2 then
+					Begin
+						opcoes('Remover Fila',num);
+						Case num of
+							1: remover_fila(fila_mono,'MONO');
+							2: remover_fila(fila_color,'COLOR');
+							3: remover_fila(fila_plotter,'PLOTTER');
+						End
+					End 
 		End;
 End.
