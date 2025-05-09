@@ -6,29 +6,29 @@ Type tipo_inf = integer;
 		prox:ptnodo //Dados do próximo ponteiro
 	End;
 Var
-	fila:ptnodo;
-	opc:integer;
+	fila:ptnodo;  //Define a fila como uma estrutura que pode armazenar dados e o próximo elemento;
+	opc:integer;  //Variavel paara o menu;
 
-Procedure inicializa(VAR f:ptnodo);
+Procedure inicializa(VAR f:ptnodo); //Procededimento que inicializa a fila e define ela como NIL(vazia);
 	Begin
 		f:=nil;
 	End;
 
-Procedure insere(VAR f:ptnodo);
+Procedure insere(VAR f:ptnodo); //Procedimento para inserir dados a fila
 Var
-	num:integer;
-	aux,aux2:ptnodo;
+	num:integer;  //Variavel utilizada para ler os elementos inserido pelo usuário;
+	aux,aux2:ptnodo; //Variáaveis auxiliares que copiam os dados da fila;
 	Begin
 		CLRSCR;
-		new(aux);
-		If aux = nil then
+		new(aux);  //Aloca um espaço de memória para o ponteiro aux;
+		If aux = nil then //Se a variável receber o valor Nil(vazia), então a memória está cheia;
 			Writeln('Sua memória está cheia!')
-		Else
+		Else //Se não caso for o primeiro número deve ser a variável fila deve receber os valores definidos em AUX;
 			If f = nil then
 				Begin
 					Writeln('Informe o seu número:');
 					Readln(num);
-					aux^.dado:=num;
+					aux^.dado:=num; //Ponteiro na parte de dado ff
 					aux^.prox:=nil;
 					fila:=aux;
 				End			
