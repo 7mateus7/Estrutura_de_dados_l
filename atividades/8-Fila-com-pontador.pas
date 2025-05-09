@@ -28,18 +28,18 @@ Var
 				Begin
 					Writeln('Informe o seu número:');
 					Readln(num);
-					aux^.dado:=num; //Ponteiro na parte de dado ff
-					aux^.prox:=nil;
-					fila:=aux;
+					aux^.dado:=num; //É adicionado o elemento a fila, somente na parte de dados;
+					aux^.prox:=nil; //É adicionado a posição a fila, somente na parte da posição;
+					fila:=aux; //Fila recebe a estrutura aux inteira;
 				End			
 			Else
 				Begin
-					aux2:=f;
-					While aux2^.prox <> nil do
+					aux2:=f; //É criada a variável de auxílio 02, recebendo a estrutura da fila inteira;
+					While aux2^.prox <> nil do //Percorre a fila de ponteiros para encontrar o último elemento
 						aux2:=aux2^.prox;
 					Writeln('Informe o seu número:');
 					Readln(num);
-					aux^.dado:=num;
+					aux^.dado:=num; 
 					aux^.prox:=nil;
 					aux2^.prox:=aux;
 				End;
