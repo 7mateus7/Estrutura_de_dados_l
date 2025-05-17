@@ -1,5 +1,6 @@
 Program Pzim ;
-Type tipo_inf = integer;
+Type 
+	tipo_inf = integer;
 	ptnodo = ^Tfila; //Reserva um espaço de memória para fila
 	Tfila = record //Register com as informações que serão armazenadas no ponteiro 
 		dado:tipo_inf; //Dados do tipo integer;
@@ -39,29 +40,29 @@ Var
 						aux2:=aux2^.prox;
 					Writeln('Informe o seu número:');
 					Readln(num);
-					aux^.dado:=num; 
-					aux^.prox:=nil;
-					aux2^.prox:=aux;
+					aux^.dado:=num;	//O novo apontador AUX recebe no seu campo dado o elemento inserido; 
+					aux^.prox:=nil; //O AUX^.prox aponta para NIL(vazia);
+					aux2^.prox:=aux; //O último ponteiro da fila começa a apontar para o novo elemento da fila, ou seja, aponta para o NOVO último elemento;
 				End;
 	End;
 
-Procedure remove(VAR f:ptnodo);
+Procedure remove(VAR f:ptnodo); //Procedimento para remover um número da FILA
 Var
-	aux:ptnodo;
+	aux:ptnodo; //Variávek AUX recebe o tipo 'ptnodo';
 	Begin
 		CLRSCR;
-		If f = nil then
+		If f = nil then //Se a fila estiver NIL, então ela está vazia
 			Writeln('Fila Vazia')
 		Else
 			Begin
-				aux:=f;
-				Writeln('Removendo o número ',aux^.dado);
-				fila:=aux^.prox;
-				dispose(aux);
+				aux:=f; //Variável AUX aponta para o mesmo local de 'f';
+				Writeln('Removendo o número ',f^.dado); //Apresenta a mensagem na tela do número que está sendo removido;
+				f:=aux^.prox; //Variável 'f' aponta para o próximo elemento da fila;
+				dispose(aux); //É removido a variável AUX;
 			End;
 	End;
 	
-Procedure consulta(VAR f:ptnodo);
+Procedure consulta(VAR f:ptnodo); //
 Var
 	aux:ptnodo;
 	Begin
