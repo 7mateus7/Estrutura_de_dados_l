@@ -40,7 +40,7 @@ Procedure leAluno(VAR A : String);	//Lê o nome do aluno e deixa o mesmo com toda
 
 Procedure pesquisa_curso(VAR auxiliar_c, anterior_c :ptnodoCurso; curso:String);
 	Begin
-		While (auxiliar_c <> NIL) AND (auxiliar_c^.dadoCurso < curso) DO
+		While (auxiliar_c <> NIL) AND (auxiliar_c^.dadoCurso = curso) DO
 			Begin
 				anterior_c:= auxiliar_c;
 				auxiliar_c:= auxiliar_c^.proxCurso;
@@ -91,7 +91,7 @@ Var
 						ant_c:=l;
 						pesquisa_curso(aux2_c, ant_c, c);
 						
-						If (aux2_c^.dadoCurso = c) THEN
+						If aux2_c^.dadoCurso = c THEN
 							Begin
 								NEW(aux_a);
 								If aux_a = NIL then
