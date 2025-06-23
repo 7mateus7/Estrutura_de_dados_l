@@ -1,5 +1,5 @@
 Program Pzim ;
-Const								//Defini as constantes com os valores máximos de cada fila;
+Const								//Define as constantes com os valores máximos de cada fila;
 	max_mono = 10;
 	max_color = 5;
 	max_plotter = 3;

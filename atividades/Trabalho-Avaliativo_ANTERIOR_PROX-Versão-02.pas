@@ -4,12 +4,14 @@ Type
 	
 	ptnodoAlunos = ^TlistaAlunos;	//Definição do ponteiro de alunos;
 	TlistaAlunos = Record
+		antAluno : ptnodoAlunos;
 		nome : tpdados;
 		proxAluno : ptnodoAlunos;
 	End;
 	
 	ptnodoCurso = ^TlistaCursos;	//Definição do ponteiro de cursos;
 	TlistaCursos = Record
+		antCurso : ptnodoCurso;
 		dadoCurso : tpdados;
 		alunos : ptnodoAlunos;
 		proxCurso : ptnodoCurso;
@@ -55,7 +57,64 @@ Procedure pesquisa_aluno(VAR l_aluno, anterior_a : ptnodoAlunos; aluno_i : Strin
 			End;
 	End;
 
-Procedure inserir (VAR l : ptnodoCurso; c : String); //Procedimento que insere e valida cursos e alunos;
+Procedure insere_aluno(VAR auxiliar : ptnodoCurso);
+VAR
+	aux_a, aux2_a, ant_a : ptnodoAlunos;
+	nome : tpdados;
+	Begin
+		NEW(aux_a);
+		If aux_a = NIL Then
+			Writeln('Não foi possível cadastrar Aluno. Motivo : Memória Cheia')
+		Else
+			Begin
+				leAluno(nome);
+				aux_a^.nome:=nome;
+				aux2_a:=auxiliar^.alunos;
+				
+				If aux2_a = NIL Then
+					Begin
+						aux_a^.proxAluno:=NIL;
+						aux_a^.antAluno:=NIL;
+						auxiliar^.alunos:=aux_a;
+						Writeln('Aluno ',nome,' cadastrado.');
+					End
+				Else
+					Begin
+						ant_a:=auxiliar^.alunos;
+						pesquisa_aluno(aux2_a, ant_a, nome);
+						
+						If aux2_a^.nome = nome Then
+							Writeln('Não foi possível cadastrar o aluno. Motivo : Aluno já cadastrado.')
+						Else
+							If (aux2_a = ant_a) AND (aux2_a^.nome > nome) Then
+								Begin
+									aux_a^.proxAluno:=aux2_a;
+									auxiliar^.alunos:=aux_a;
+									aux2_a^.antAluno:=aux_a;
+									Writeln('Aluno ',nome,' cadastrado.');
+								End
+							Else
+								If (aux2_a = NIL) AND (ant_a^.nome < nome) Then
+									Begin
+										aux_a^.proxAluno:=NIL;
+										ant_a^.proxAluno:=aux_a;
+										aux_a^.antAluno:=ant_a;
+										Writeln('Aluno ',nome,' cadastrado.');	
+									End
+								Else
+									If (aux2_a <> NIL) AND (aux2_a^.nome > nome) Then
+										Begin
+											aux_a^.proxAluno:=aux2_a;
+											ant_a^.proxAluno:=aux_a;
+											aux_a^.antAluno:=ant_a;
+											aux2_a^.antAluno:=aux_a;
+											Writeln('Aluno ',nome,' cadastrado.');
+										End
+					End
+			End
+	End;
+
+Procedure inserir (VAR l, l_fim : ptnodoCurso; c : String); //Procedimento que insere e valida cursos e alunos;
 Var
 	aux_c, aux2_c, ant_c : ptnodoCurso;
 	aux_a, aux2_a, ant_a : ptnodoAlunos;
@@ -70,6 +129,7 @@ Var
 				aux_c^.dadoCurso:=c; //Armezana o nome doo curos que está por parâmetro;
 				aux_c^.alunos:=NIL; //Aponta a lista de alunos inicialmente para NIL;
 				aux_c^.proxCurso:=NIL; //Inicialmente aponta o ponteiro do próximo curso para NIL;
+			  aux_c^.antCurso:=NIL;
 				
 				aux2_c:=l; //Variáveis de auxílio;
 				ant_c:=l;
@@ -77,7 +137,8 @@ Var
 				If aux2_c = NIL Then	//Lista está vazia;
 					Begin
 						Writeln('Curso ',c,' cadastrado.');
-						l:= aux_c
+						l:= aux_c;
+						l_fim:= aux_c;
 					End
 					
 				Else
@@ -90,13 +151,15 @@ Var
 									Begin
 										aux_c^.proxCurso:=aux2_c;
 										l:=aux_c;
-										//aux2_c:=aux2_c^.proxCurso;
+										aux2_c^.antCurso:=aux_c;
 										Writeln('Curso ',c,' cadastrado.');
 									End
 								Else
 									If (aux2_c = NIL) AND (c > ant_c^.dadoCurso) Then //Se nenhum a minha lista de nome encontrar um nome que for > c, e minha variável c for > o último nome da lista, o curso é inserido no final da lista. (EX: ADM - BSN - FIS*);
 										Begin
 											ant_c^.proxCurso:=aux_c;
+											aux_c^.antCurso:=ant_c;
+											l_fim:=aux_c;
 											Writeln('Curso ',c,' cadastrado.');
 										End
 									Else
@@ -104,63 +167,17 @@ Var
 											Begin
 												aux_c^.proxCurso:=aux2_c;
 												ant_c^.proxCurso:=aux_c;
+												aux_c^.antCurso:=ant_c;
+												aux2_c^.antCurso:=aux_c;
 												Writeln('Curso ',c,' cadastrado.');
 											End
 						End;   	
 			End;
-			
-			
-		NEW(aux_a); //Solicita a alocação de um novo espaço em memória para o registro de aluno;
-		If aux_a = NIL Then
-			Writeln('Não foi possível cadastrar aluno. Motivo : Memória Cheia')
-		Else
-			Begin
-				leAluno(aluno); //Procedimento para ler o nome do aluno;
-				aux_a^.nome:=aluno; //Armazena o nome do aluno no ponteiro ^.nome
-				aux_a^.proxAluno:=NIL; //Aponta para o próximo curso como NIL;
-				
-				
-				If (aux2_c = NIL) or (aux2_c^.dadoCurso <> c) then 
-        	aux2_c := aux_c;
-				
-				aux2_a:=aux2_c^.alunos; //Variáveis de auxílio
-				ant_a:=aux2_c^.alunos;
-				
-				If aux2_c^.alunos = NIL Then //Caso a lista de alunos de determinado curso esteja vazia, a fila de alunos passa a apontar para o aluno inserido; 	
-					Begin
-						Writeln('Aluno ',aluno,' cadastrado.');
-						aux2_c^.alunos:=aux_a
-					End
-				Else
-					Begin
-						pesquisa_aluno(aux2_a, ant_a, aluno); //Procedimento que realiza a pesquisa na lista de alunos de um determinado curso;
-						
-						If (aux2_a^.nome = aluno) AND (aux2_a <> NIL) then  //Caso algum nome contido na lista de alunos de determinado curso for = a variável aluno, então o aluno já está contido. (EX: Mateus -> Mateus);
-							Begin
-								Writeln('Não foi possível cadastrar o aluno. Motivo : Aluno já consta na lista de alunos do Curso ',aux2_c^.dadoCurso,'.');
-							End
-						Else
-							If (aux2_a = ant_a) AND (aux2_a^.nome > aluno) Then //Caso o primeiro nome da lista de alunos for maior que o aluno que será cadastrado, então o aluno é cadastrado na primeira posição. (EX: André* -> Bernardo);
-								Begin
-									aux_a^.proxAluno:=aux2_a;
-									aux2_c^.alunos:=aux_a;
-									Writeln('Aluno ',aluno,' cadastrado.');
-								End
-							Else
-								If (aux2_a = NIL) AND (ant_a^.nome < aluno) Then //Caso nenhum nome na lista de aluno de determinado curso seja > que o aluno que será inserido, então o aluno é cadastrado na última posição da lista. (EX: André - Bernardo -> Mateus*);
-									Begin
-										ant_a^.proxAluno:=aux_a;
-										Writeln('Aluno ',aluno,' cadastrado.');
-									End
-								Else                        
-									If (aux2_a <> NIL) AND (aux2_a^.nome > aluno) Then //Caso em algum momento o nome contido na lista for > que o nome do aluno que será inserido, então o aluno é inserido entre os nomes. (EX: André -> Bernardo* -> Mateus);
-										Begin
-											aux_a^.proxAluno:=aux2_a;
-											ant_a^.proxAluno:=aux_a;
-											Writeln('Aluno ',aluno,' cadastrado.');
-										End
-					End;
-			End		
+		
+		If (aux2_c = NIL) OR (aux2_c^.dadoCurso <> c) Then
+			aux2_c:=aux_c;
+					
+		insere_aluno(aux2_c);
 	End;
 	
 Procedure remover (VAR l : ptnodoCurso);
@@ -234,7 +251,7 @@ VAR
 			End;	
 	End;
 
-Procedure escreve_cursos(l : ptnodoCurso);
+Procedure escreve_cursos_i(l : ptnodoCurso);
 Var
 	aux_c : ptnodoCurso;
 	i : Integer;
@@ -257,7 +274,30 @@ Var
 			End;
 	End;
 
-Procedure escreve_alunos(l : ptnodoCurso);
+Procedure escreve_cursos_f(l : ptnodoCurso);
+Var
+	aux_c : ptnodoCurso;
+	i : Integer;
+	Begin
+		CLRSCR;
+		i:=0;
+		aux_c:=l; //Variável de auxílio;
+		If aux_c = NIL Then //Caso a lista de cursos esteja apontando para NIL, ou seja, está vazia;
+			Writeln('Não foi possível escrever a Lista de Cursos. Motivo: Lista vazia')
+		Else
+			Begin
+				While aux_c <> NIL Do //Enquanto não chegar ao final da lista;
+					Begin
+						i:=i +1;
+						Write('',i,'-', aux_c^.dadoCurso,' ');
+						aux_c:= aux_c^.antCurso;
+					End;
+				Writeln();
+				Writeln('Há ',i,' cursos cadastrados no momento.');
+			End;
+	End;
+
+Procedure escreve_alunos_i(l : ptnodoCurso);
 Var
 	c : String;
 	aux_c, ant : ptnodoCurso;
@@ -300,14 +340,59 @@ Var
 			End
 	End;
 
+Procedure escreve_alunos_f(l : ptnodoCurso);
+Var
+	c : String;
+	aux_c, ant : ptnodoCurso;
+	aux_a : ptnodoAlunos;
+	i : Integer;
+	Begin
+		CLRSCR;
+		aux_c:=l; //Variável de auxílio;
+		If aux_c = NIL Then //Caso a lista esteja = NIL, ou seja, está vazia;
+			Writeln('Não foi possível escrever os alunos. Motivo: Lista Vazia.')
+		Else
+			Begin
+				leCurso(c); //Solicita o nome do curso;
+				If length(c) = 3 Then
+					Begin
+						pesquisa_curso(aux_c, ant, c); //Realiza a busca do curso informado em comparação a lista de cursos já cadastrados;
+						
+						If aux_c^.dadoCurso = c Then //Caso o curso esteja cadastrado;
+							Begin
+								aux_a:=aux_c^.alunos; //Variável de auxílio;
+								If aux_a = NIL Then
+									Writeln('Não foi possível escrever os alunos. Motivo: Lista de alunos vazia.') //Caso a lista de alunos do curso solicitado esteja = NIL, ou seja, vazia;
+								Else
+									Begin
+										While aux_a^.proxAluno <> NIL Do
+											aux_a:=aux_a^.proxAluno;	
+										While aux_a <> NIL Do
+											Begin
+												i:=i +1;
+												Write('',i,'-',aux_a^.nome,' ');
+												aux_a:=aux_a^.antAluno;	
+											End;
+										WRITELN();
+										Writeln('Há ',i,' alunos cadastrados no curso ',aux_c^.dadoCurso);
+									End;	
+							End
+						Else
+							Writeln('Não foi possível escrever os alunos. Motivo: Curso não Cadastrado') //Caso a sigla do curso informado ainda não esteja cadastrada;
+					End
+				Else
+					Writeln('Não foi possívek escrever os alunos. Motivo: Sigla informada Inválida.'); //Caso a sigla do curso informado for <> de 3 caracteres;
+			End
+	End;
+
 VAR
-	lista : ptnodoCurso;
+	lista, lista_fim : ptnodoCurso;
 	opc : Integer;
 	curso : String;
 	
 Begin	
 	inicializa(lista);
-	While opc <> 5 do //MENU (início);
+	While opc <> 7 do //MENU (início);
 		Begin
 			Writeln('===============================');
 			Writeln('   SISTEMA DE GESTÃO DE CURSOS  ');
@@ -316,23 +401,29 @@ Begin
 			Writeln('[1] - Cadastro de Alunos');
 			Writeln('[2] - Remover Alunos');
 			Writeln('[3] - Escrever Cursos');
-			Writeln('[4] - Escrever Alunos');
-			Writeln('[5] - Encerrar Programa');
+			Writeln('[4] - Escrever Cursos (FIM -> INÍCIO)');
+			Writeln('[5] - Escrever Alunos');
+			Writeln('[6] - Escrever Alunos (FIM -> INÍCIO)');
+			Writeln('[7] - Encerrar Programa');
 			Readln(opc);
 			Case opc of
 				1:
 					Begin
 						leCurso(curso); //Lê a SIGLA do curso;
 						If length(curso) = 3 Then //Aceita somente 3 caracteres;
-				 			inserir(lista, curso);
+				 			inserir(lista,lista_fim, curso);
 				 	End;
 				2: remover(lista);
 				
-				3: escreve_cursos(lista);
+				3: escreve_cursos_i(lista);
 				
-				4: escreve_alunos(lista);
+				4: escreve_cursos_f(lista_fim);
 				
-				5: Writeln('Encerrando o programa...');
+				5: escreve_alunos_i(lista);
+				
+				6: escreve_alunos_f(lista);
+				
+				7: Writeln('Encerrando o programa...');
 				Else
 					Writeln('Opção Errada!');
 			End;
